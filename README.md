@@ -192,4 +192,18 @@ yarn chain & yarn deploy && yarn start
 - **GitHub:** [MrRogueKnight](https://github.com/MrRogueKnight)
 - **LinkedIn:** [Prashant Ranjan](https://www.linkedin.com/in/MrRogueKnight)
 
+---
+
+## Submit Challenge
+
+over-collateralized-lending
+
+**Deployed URL**  
+https://challenge-5-over-collateralized-len-nu.vercel.app/
+
+**Etherscan URL**  
+https://sepolia.etherscan.io/address/0x22ec90D61d46B0208e1D637CC3143462390DD68E 
+
+---
+
 If you have any questions, open an issue or join the community! 
