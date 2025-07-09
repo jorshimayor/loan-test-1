@@ -1,4 +1,4 @@
-
+const path = require('path-external');
 const nextConfig = {
   reactStrictMode: true,
   devIndicators: false,
@@ -12,6 +12,10 @@ const nextConfig = {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;
+  },
+  output: {
+    path: path.join(__dirname, 'dist'),
+    filename: 'server.js',
   },
 };
 
