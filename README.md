@@ -137,22 +137,9 @@ flowchart TD
 
 ---
 
-## Contributing
-
-Pull requests and issues are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md).
-
----
-
 ## License
 
 MIT
-
----
-
-## Community & Support
-
-- [Telegram Group](https://t.me/+xQr5d-oVhLMwZmUx)
-- [SpeedRunEthereum.com](https://speedrunethereum.com)
 
 ---
 
@@ -175,35 +162,3 @@ A: This is a learning project! Use testnets and never risk real funds.
 - Frontend is in `packages/nextjs/`
 - Deployment scripts in `packages/hardhat/deploy/`
 - Tests in `packages/hardhat/test/`
-
----
-
-## Quick Start (One-liner)
-
-```sh
-yarn chain & yarn deploy && yarn start
-```
-
----
-
-## My Portfolio & Socials
-
-- **SpeedRunEthereum Portfolio:** [https://speedrunethereum.com/builders/0x58ad103D0C0E69250CaC89Ddf0BDaD396914C411](https://speedrunethereum.com/builders/0x58ad103D0C0E69250CaC89Ddf0BDaD396914C411)
-- **GitHub:** [MrRogueKnight](https://github.com/MrRogueKnight)
-- **LinkedIn:** [Prashant Ranjan](https://www.linkedin.com/in/MrRogueKnight)
-
----
-
-## Submit Challenge
-
-over-collateralized-lending
-
-**Deployed URL**  
-https://challenge-5-over-collateralized-len-nu.vercel.app/
-
-**Etherscan URL**  
-https://sepolia.etherscan.io/address/0x22ec90D61d46B0208e1D637CC3143462390DD68E 
-
----
-
-If you have any questions, open an issue or join the community! 
