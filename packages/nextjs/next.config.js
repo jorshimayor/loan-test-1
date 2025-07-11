@@ -1,4 +1,4 @@
-const path = require('path-external');
+const path = require('path-extend');
 const nextConfig = {
   reactStrictMode: true,
   devIndicators: false,
