@@ -4,11 +4,11 @@ import BorrowOperations from "./_components/BorrowOperations";
 import CollateralGraph from "./_components/CollateralGraph";
 import CollateralOperations from "./_components/CollateralOperations";
 import PriceActions from "./_components/PriceActions";
+import ProtectionDashboard from "./_components/ProtectionDashboard";
 import TokenActions from "./_components/TokenActions";
 import UserPositionsTable from "./_components/UserPositionsTable";
-import type { NextPage } from "next";
 
-const Dashboard: NextPage = () => {
+const Dashboard = () => {
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10 pb-16">
@@ -24,6 +24,7 @@ const Dashboard: NextPage = () => {
               <TokenActions />
             </div>
             <div className="flex flex-col gap-8">
+              <ProtectionDashboard />
               <UserPositionsTable />
               <CollateralGraph />
             </div>

@@ -822,6 +822,22 @@ const deployedContracts = {
           type: "error",
         },
         {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "protectionEndsAt",
+              type: "uint256",
+            },
+          ],
+          name: "Lending__GracePeriodActive",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "Lending__GracePeriodNotStarted",
+          type: "error",
+        },
+        {
           inputs: [],
           name: "Lending__RepayingFailed",
           type: "error",
@@ -1056,6 +1072,25 @@ const deployedContracts = {
               type: "address",
             },
           ],
+          name: "getHealthFactor",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
           name: "isLiquidatable",
           outputs: [
             {
@@ -1065,6 +1100,19 @@ const deployedContracts = {
             },
           ],
           stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "updateRiskStatus",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -1111,6 +1159,25 @@ const deployedContracts = {
           name: "repayCorn",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "s_atRiskSince",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -1199,6 +1266,11 @@ const deployedContracts = {
               name: "_cornToken",
               type: "address",
             },
+            {
+              internalType: "address",
+              name: "_lending",
+              type: "address",
+            },
           ],
           stateMutability: "nonpayable",
           type: "constructor",
@@ -1216,6 +1288,24 @@ const deployedContracts = {
             },
           ],
           name: "movePrice",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "size",
+              type: "int256",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "movePriceAndUpdateRisk",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -2045,6 +2135,22 @@ const deployedContracts = {
           type: "error",
         },
         {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "protectionEndsAt",
+              type: "uint256",
+            },
+          ],
+          name: "Lending__GracePeriodActive",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "Lending__GracePeriodNotStarted",
+          type: "error",
+        },
+        {
           inputs: [],
           name: "Lending__RepayingFailed",
           type: "error",
@@ -2274,6 +2380,25 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getHealthFactor",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "contract IFlashLoanRecipient",
               name: "_recipient",
               type: "address",
@@ -2359,6 +2484,19 @@ const deployedContracts = {
               type: "address",
             },
           ],
+          name: "updateRiskStatus",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
           name: "liquidate",
           outputs: [],
           stateMutability: "nonpayable",
@@ -2395,6 +2533,25 @@ const deployedContracts = {
           name: "repayCorn",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "s_atRiskSince",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -2483,6 +2640,11 @@ const deployedContracts = {
               name: "_cornToken",
               type: "address",
             },
+            {
+              internalType: "address",
+              name: "_lending",
+              type: "address",
+            },
           ],
           stateMutability: "nonpayable",
           type: "constructor",
@@ -2500,6 +2662,24 @@ const deployedContracts = {
             },
           ],
           name: "movePrice",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "int256",
+              name: "size",
+              type: "int256",
+            },
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "movePriceAndUpdateRisk",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",

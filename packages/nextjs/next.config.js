@@ -1,4 +1,3 @@
-const path = require('path-extend');
 const nextConfig = {
   reactStrictMode: true,
   devIndicators: false,
@@ -13,10 +12,7 @@ const nextConfig = {
     config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;
   },
-  output: {
-    path: path.join(__dirname, 'dist'),
-    filename: 'server.js',
-  },
+  output: "standalone",
 };
 
 const isIpfs = process.env.NEXT_PUBLIC_IPFS_BUILD === "true";

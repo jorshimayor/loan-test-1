@@ -13,16 +13,20 @@ error Lending__RepayingFailed();
 error Lending__PositionSafe();
 error Lending__NotLiquidatable();
 error Lending__InsufficientLiquidatorCorn();
+error Lending__GracePeriodActive(uint256 protectionEndsAt);
+error Lending__GracePeriodNotStarted();
 
 contract Lending is Ownable {
     uint256 private constant COLLATERAL_RATIO = 120; // 120% collateralization required
     uint256 private constant LIQUIDATOR_REWARD = 10; // 10% reward for liquidators
+    uint256 private constant GRACE_PERIOD = 24 hours;
 
     Corn private i_corn;
     CornDEX private i_cornDEX;
 
     mapping(address => uint256) public s_userCollateral; // User's collateral balance
     mapping(address => uint256) public s_userBorrowed; // User's borrowed corn balance
+    mapping(address => uint256) public s_atRiskSince; // Timestamp of when user became liquidatable (healthFactor < 1.0)
 
     event CollateralAdded(address indexed user, uint256 indexed amount, uint256 price);
     event CollateralWithdrawn(address indexed user, uint256 indexed amount, uint256 price);
@@ -50,6 +54,7 @@ contract Lending is Ownable {
             revert Lending__InvalidAmount();
         }
         s_userCollateral[msg.sender] += msg.value;
+        _updateRiskStatus(msg.sender);
         emit CollateralAdded(msg.sender, msg.value, i_cornDEX.currentPrice());
     }
 
@@ -68,6 +73,7 @@ contract Lending is Ownable {
         if (s_userBorrowed[msg.sender] > 0) {
             _validatePosition(msg.sender);
         }
+        _updateRiskStatus(msg.sender);
         emit CollateralWithdrawn(msg.sender, amount, i_cornDEX.currentPrice());
     }
 
@@ -96,13 +102,25 @@ contract Lending is Ownable {
     }
 
     /**
+     * @notice Health factor scaled by 1e18, where 1.0 is the liquidation threshold.
+     * @dev Aligns with COLLATERAL_RATIO. If healthFactor < 1e18, the position is liquidatable.
+     */
+    function getHealthFactor(address user) public view returns (uint256) {
+        uint256 borrowed = s_userBorrowed[user];
+        if (borrowed == 0) {
+            return type(uint256).max;
+        }
+        uint256 positionRatio = _calculatePositionRatio(user);
+        return (positionRatio * 100) / COLLATERAL_RATIO;
+    }
+
+    /**
      * @notice Checks if a user's position can be liquidated
      * @param user The address of the user to check
      * @return bool True if the position is liquidatable, false otherwise
      */
     function isLiquidatable(address user) public view returns (bool) {
-        uint256 positionRatio = _calculatePositionRatio(user);
-        return (positionRatio * 100) < COLLATERAL_RATIO * 1e18;
+        return getHealthFactor(user) < 1e18;
     }
 
     /**
@@ -112,6 +130,26 @@ contract Lending is Ownable {
     function _validatePosition(address user) internal view {
         if (isLiquidatable(user)) {
             revert Lending__UnsafePositionRatio();
+        }
+    }
+
+    function updateRiskStatus(address user) external {
+        _updateRiskStatus(user);
+    }
+
+    function _updateRiskStatus(address user) internal {
+        uint256 healthFactor = getHealthFactor(user);
+        uint256 currentAtRiskSince = s_atRiskSince[user];
+
+        if (healthFactor >= 1e18) {
+            if (currentAtRiskSince != 0) {
+                s_atRiskSince[user] = 0;
+            }
+            return;
+        }
+
+        if (currentAtRiskSince == 0) {
+            s_atRiskSince[user] = block.timestamp;
         }
     }
 
@@ -129,6 +167,7 @@ contract Lending is Ownable {
         if (!success) {
             revert Lending__BorrowingFailed();
         }
+        _updateRiskStatus(msg.sender);
         emit AssetBorrowed(msg.sender, borrowAmount, i_cornDEX.currentPrice());
     }
 
@@ -145,6 +184,7 @@ contract Lending is Ownable {
         if (!success) {
             revert Lending__RepayingFailed();
         }
+        _updateRiskStatus(msg.sender);
         emit AssetRepaid(msg.sender, repayAmount, i_cornDEX.currentPrice());
     }
 
@@ -157,6 +197,14 @@ contract Lending is Ownable {
     function liquidate(address user) public {
         if (!isLiquidatable(user)) {
             revert Lending__NotLiquidatable();
+        }
+        uint256 atRiskSince = s_atRiskSince[user];
+        if (atRiskSince == 0) {
+            revert Lending__GracePeriodNotStarted();
+        }
+        uint256 protectionEndsAt = atRiskSince + GRACE_PERIOD;
+        if (block.timestamp < protectionEndsAt) {
+            revert Lending__GracePeriodActive(protectionEndsAt);
         }
         uint256 userDebt = s_userBorrowed[user];
         if (i_corn.balanceOf(msg.sender) < userDebt) {
@@ -171,6 +219,7 @@ contract Lending is Ownable {
         uint256 amountForLiquidator = collateralPurchased + liquidatorReward;
         amountForLiquidator = amountForLiquidator > userCollateral ? userCollateral : amountForLiquidator;
         s_userCollateral[user] = userCollateral - amountForLiquidator;
+        s_atRiskSince[user] = 0;
         (bool sent, ) = payable(msg.sender).call{ value: amountForLiquidator }("");
         require(sent, "Failed to send Ether");
         emit Liquidation(user, msg.sender, amountForLiquidator, userDebt, i_cornDEX.currentPrice());

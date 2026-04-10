@@ -50,7 +50,7 @@ const deployContracts: DeployFunction = async function (hre: HardhatRuntimeEnvir
   // Set up the move price contract
   const movePrice = await deploy("MovePrice", {
     from: deployer,
-    args: [cornDEX.target, cornToken.target],
+    args: [cornDEX.target, cornToken.target, lending.address],
     log: true,
     autoMine: true,
   });
@@ -74,6 +74,8 @@ const deployContracts: DeployFunction = async function (hre: HardhatRuntimeEnvir
 
     await cornToken.approve(cornDEX.target, hre.ethers.parseEther("1000000000"));
     await cornDEX.init(hre.ethers.parseEther("1000000000"), { value: hre.ethers.parseEther("1000000") });
+
+    await cornToken.transferOwnership(lending.address);
   }
 };
 

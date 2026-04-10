@@ -1,7 +1,11 @@
 import { HDNodeWallet, parseEther } from "ethers";
 import hre from "hardhat";
-import { CornDEX, Lending, Corn, MovePrice } from "../typechain-types";
 const ethers = hre.ethers;
+
+type CornDEX = any;
+type Lending = any;
+type Corn = any;
+type MovePrice = any;
 
 interface SimulatedAccount {
   wallet: HDNodeWallet;
@@ -183,7 +187,7 @@ async function checkAndPerformLiquidations(lending: Lending, corn: Corn, account
 
   const filter = lending.filters.CollateralAdded();
   const events = await lending.queryFilter(filter);
-  const users = [...new Set(events.map(event => event.args[0]))];
+  const users = Array.from(new Set<string>(events.map((event: any): string => String(event.args[0]))));
 
   for (const user of users) {
     if (liquidationInProgress.has(user.toLowerCase())) continue;
@@ -212,7 +216,7 @@ async function checkAndPerformLiquidations(lending: Lending, corn: Corn, account
       if (randomAccount.wallet.address.toLowerCase() !== user.toLowerCase()) {
         const cornDEXWithAccount = cornDEX.connect(randomAccount.wallet);
 
-        const currentPrice = await cornDEX.currentPrice();
+        const currentPrice = BigInt(await cornDEX.currentPrice());
         const ethNeeded = (amountBorrowed * currentPrice * 110n) / (1000n * parseEther("1"));
         const balance = await ethers.provider.getBalance(randomAccount.wallet.address);
         const maxETHPossible = ethNeeded > balance ? balance - ethers.parseEther("0.1") : ethNeeded;

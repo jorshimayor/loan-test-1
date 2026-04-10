@@ -1,11 +1,13 @@
 import React from "react";
 import TooltipInfo from "./TooltipInfo";
 import { formatEther, parseEther } from "viem";
+import { useAccount } from "wagmi";
 import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { tokenName } from "~~/utils/constant";
 
 const PriceActions = () => {
+  const { address } = useAccount();
   const { data: price } = useScaffoldReadContract({
     contractName: "CornDEX",
     functionName: "currentPrice",
@@ -13,7 +15,7 @@ const PriceActions = () => {
 
   const { writeContractAsync } = useScaffoldWriteContract({ contractName: "MovePrice" });
 
-  const priceOfOneCORN = price ? parseEther((1 / Number(formatEther(price))).toString()) : undefined; // Fixed parentheses and added toString()
+  const priceOfOneCORN = price ? parseEther((1 / Number(formatEther(price))).toString()) : undefined;
   const renderPrice =
     priceOfOneCORN === undefined ? (
       <div className="mr-1 skeleton w-10 h-4"></div>
@@ -28,13 +30,20 @@ const PriceActions = () => {
       return;
     }
     const amount = parseEther("50000");
-    const amountToSell = isIncrease ? amount : -amount * 1000n;
+    const amountToSell = isIncrease ? amount : -(amount * 1000n);
 
     try {
-      await writeContractAsync({
-        functionName: "movePrice",
-        args: [amountToSell],
-      });
+      if (address) {
+        await writeContractAsync({
+          functionName: "movePriceAndUpdateRisk",
+          args: [amountToSell, address],
+        });
+      } else {
+        await writeContractAsync({
+          functionName: "movePrice",
+          args: [amountToSell],
+        });
+      }
     } catch (e) {
       console.error("Error setting the price:", e);
     }
